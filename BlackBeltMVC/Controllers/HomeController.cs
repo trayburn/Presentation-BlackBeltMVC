@@ -8,27 +8,26 @@ namespace BlackBeltMVC.Controllers
 {
     public class HomeController : Controller
     {
-        public object Index(HomeViewModel model)
-        //public void Index()
+        //public object Index(HomeViewModel model, CurrentUser user)
+        public ActionResult Index()
         {
             ViewBag.Title = "Home Page";
 
-            return new HomeViewModel
+            return View(new HomeViewModel
             {
                 //Message = "I am a Black Belt!"
-                Message = string.Format("{0} is a Black Belt!", model.CurrentUser.User)
-            };
+                Message = string.Format("{0} is a Black Belt!", HttpContext.Request.Browser.Id)
+            });
         }
 
-        protected override IActionInvoker CreateActionInvoker()
-        {
-            return new ViewResultControllerActionInvoker();
-        }
+        //protected override IActionInvoker CreateActionInvoker()
+        //{
+        //    return new ViewResultControllerActionInvoker();
+        //}
     }
 
     public class HomeViewModel
     {
-        public CurrentUser CurrentUser { get; set; }
         public string Message { get; set; }
     }
 
