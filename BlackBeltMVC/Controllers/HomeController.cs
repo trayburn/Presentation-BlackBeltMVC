@@ -8,15 +8,15 @@ namespace BlackBeltMVC.Controllers
 {
     public class HomeController : Controller
     {
-        //public object Index(CurrentUser user)
-        public object Index()
+        public object Index(HomeViewModel model)
+        //public void Index()
         {
             ViewBag.Title = "Home Page";
 
             return new HomeViewModel
             {
-                Message = "I am a Black Belt!"
-                //Message = string.Format("{0} is a Black Belt!", user.User)
+                //Message = "I am a Black Belt!"
+                Message = string.Format("{0} is a Black Belt!", model.CurrentUser.User)
             };
         }
 
@@ -28,34 +28,39 @@ namespace BlackBeltMVC.Controllers
 
     public class HomeViewModel
     {
+        public CurrentUser CurrentUser { get; set; }
         public string Message { get; set; }
     }
 
     public class ViewResultControllerActionInvoker : ControllerActionInvoker
     {
-        //public ViewResultControllerActionInvoker() : base()
-        //{
-        //    if (this.Binders.ContainsKey(typeof(CurrentUser)) == false)
-        //        this.Binders.Add(typeof(CurrentUser), new CurrentUserModelBinder());
-        //}
+        public ViewResultControllerActionInvoker() : base()
+        {
+            if (this.Binders.ContainsKey(typeof(CurrentUser)) == false)
+                this.Binders.Add(typeof(CurrentUser), new CurrentUserModelBinder());
+        }
 
         protected override ActionResult CreateActionResult(
             ControllerContext controllerContext,
             ActionDescriptor actionDescriptor,
             object actionReturnValue)
         {
+
             if (actionReturnValue == null)
-                return new ViewResult();
-            else
+                actionReturnValue = new HomeViewModel() { Message = "Hello guys!" };
+            controllerContext.Controller.ViewData.Model = actionReturnValue;
+            return new ViewResult
             {
-                controllerContext.Controller.ViewData.Model = actionReturnValue;
-                return new ViewResult
-                {
-                    ViewData = controllerContext.Controller.ViewData
-                };
-            }
+                ViewData = controllerContext.Controller.ViewData
+            };
         }
     }
+
+
+
+
+
+
 
 
     public class CurrentUser
@@ -63,11 +68,24 @@ namespace BlackBeltMVC.Controllers
         public string User { get; set; }
     }
 
+
+
+
+
+
+
+
+
+
+
     public class CurrentUserModelBinder : IModelBinder
     {
-        public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext)
+        public object BindModel(ControllerContext controllerContext, 
+            ModelBindingContext bindingContext)
         {
-            return new CurrentUser { User = controllerContext.HttpContext.Request.Browser.Id };
+            return new CurrentUser { 
+                User = controllerContext.HttpContext.Request.Browser.Id 
+            };
         }
     }
 
