@@ -9,21 +9,21 @@ namespace BlackBeltMVC.Controllers
     public class HomeController : Controller
     {
         //public object Index(HomeViewModel model, CurrentUser user)
-        public ActionResult Index()
+        public object Index(CurrentUser user)
         {
             ViewBag.Title = "Home Page";
 
-            return View(new HomeViewModel
+            return new HomeViewModel
             {
                 //Message = "I am a Black Belt!"
-                Message = string.Format("{0} is a Black Belt!", HttpContext.Request.Browser.Id)
-            });
+                Message = string.Format("{0} is a Black Belt!", user.UserName)
+            };
         }
 
-        //protected override IActionInvoker CreateActionInvoker()
-        //{
-        //    return new ViewResultControllerActionInvoker();
-        //}
+        protected override IActionInvoker CreateActionInvoker()
+        {
+            return new ViewResultControllerActionInvoker();
+        }
     }
 
     public class HomeViewModel
@@ -35,8 +35,7 @@ namespace BlackBeltMVC.Controllers
     {
         public ViewResultControllerActionInvoker() : base()
         {
-            if (this.Binders.ContainsKey(typeof(CurrentUser)) == false)
-                this.Binders.Add(typeof(CurrentUser), new CurrentUserModelBinder());
+            Binders.Add(typeof(CurrentUser), new CurrentUserModelBinder());
         }
 
         protected override ActionResult CreateActionResult(
@@ -64,7 +63,7 @@ namespace BlackBeltMVC.Controllers
 
     public class CurrentUser
     {
-        public string User { get; set; }
+        public string UserName { get; set; }
     }
 
 
@@ -83,7 +82,7 @@ namespace BlackBeltMVC.Controllers
             ModelBindingContext bindingContext)
         {
             return new CurrentUser { 
-                User = controllerContext.HttpContext.Request.Browser.Id 
+                UserName = controllerContext.HttpContext.Request.Browser.Id 
             };
         }
     }

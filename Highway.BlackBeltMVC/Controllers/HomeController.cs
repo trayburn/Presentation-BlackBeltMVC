@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Highway.BlackBeltMVC.App_Architecture.Services.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,6 +9,12 @@ namespace Highway.BlackBeltMVC.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IInjectableFilter[] filters;
+        public HomeController(IInjectableFilter[] filters)
+        {
+            this.filters = filters;
+        }
+
         public ActionResult Index()
         {
             return View();
